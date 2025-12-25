@@ -23,6 +23,10 @@ Currently, this repository contains documentation for the following Arduino libr
    - File: `WiFi_Reference.txt`
    - Functions: 40+ methods covering WiFi connection, TCP client/server, UDP communication, and network configuration
 
+3. **SPI** - Serial Peripheral Interface communication library
+   - File: `SPI_Reference.txt`
+   - Functions: 19 methods covering SPI initialization, data transfer, configuration, and multi-device support
+
 ## 🎯 Purpose
 
 The goal of this repository is to provide a centralized, easy-to-access reference for Arduino library functions without needing to search through source code or online documentation. Each library reference includes:

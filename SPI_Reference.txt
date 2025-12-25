@@ -1,0 +1,430 @@
+SPI Library Reference for Arduino
+==================================
+
+CLASS
+-----
+SPI - Serial Peripheral Interface communication class
+SPI1 - Second SPI bus (on supported boards)
+SPI2 - Third SPI bus (on supported boards)
+
+
+FUNCTIONS & METHODS
+-------------------
+
+1. begin()
+   Syntax: SPI.begin()
+   Description: Initialize SPI bus by setting SCK, MOSI, and SS to outputs, pulling SCK and MOSI low, and SS high.
+   Example: SPI.begin();
+
+2. end()
+   Syntax: void SPI.end()
+   Description: Disable SPI bus and release the SPI pins.
+   Example: SPI.end();
+
+3. transfer()
+   Syntax: uint8_t SPI.transfer(val)
+           void SPI.transfer(buf, count)
+   Description: Transfer one byte or buffer of bytes over SPI. Sends and receives simultaneously.
+   Parameters: val - byte to send, buf - buffer pointer, count - buffer size
+   Returns: Received byte (single transfer)
+   Example: byte received = SPI.transfer(0x55);
+
+4. transfer16()
+   Syntax: uint16_t SPI.transfer16(val)
+   Description: Transfer 16-bit value over SPI.
+   Parameters: val - 16-bit value to send
+   Returns: 16-bit received value
+   Example: uint16_t data = SPI.transfer16(0xABCD);
+
+5. setBitOrder()
+   Syntax: void SPI.setBitOrder(order)
+   Description: Set bit order for data transfer (LSBFIRST or MSBFIRST).
+   Parameters: order - LSBFIRST or MSBFIRST
+   Example: SPI.setBitOrder(MSBFIRST);
+   Note: Deprecated - use SPISettings instead
+
+6. setDataMode()
+   Syntax: void SPI.setDataMode(mode)
+   Description: Set SPI data mode (clock polarity and phase).
+   Parameters: mode - SPI_MODE0, SPI_MODE1, SPI_MODE2, or SPI_MODE3
+   Example: SPI.setDataMode(SPI_MODE0);
+   Note: Deprecated - use SPISettings instead
+
+7. setClockDivider()
+   Syntax: void SPI.setClockDivider(divider)
+   Description: Set SPI clock divider relative to system clock.
+   Parameters: divider - SPI_CLOCK_DIV2, DIV4, DIV8, DIV16, DIV32, DIV64, DIV128
+   Example: SPI.setClockDivider(SPI_CLOCK_DIV4);
+   Note: Deprecated - use SPISettings instead
+
+8. setMOSI()
+   Syntax: void SPI.setMOSI(pin)
+   Description: Set custom MOSI pin (platform dependent).
+   Parameters: pin - pin number for MOSI
+   Example: SPI.setMOSI(11);
+
+9. setMISO()
+   Syntax: void SPI.setMISO(pin)
+   Description: Set custom MISO pin (platform dependent).
+   Parameters: pin - pin number for MISO
+   Example: SPI.setMISO(12);
+
+10. setSCK()
+    Syntax: void SPI.setSCK(pin)
+    Description: Set custom SCK (clock) pin (platform dependent).
+    Parameters: pin - pin number for SCK
+    Example: SPI.setSCK(13);
+
+11. setCS()
+    Syntax: void SPI.setCS(pin)
+    Description: Set custom chip select pin (platform dependent).
+    Parameters: pin - pin number for CS
+    Example: SPI.setCS(10);
+
+12. usingInterrupt()
+    Syntax: void SPI.usingInterrupt(interruptNumber)
+    Description: Notify SPI library that an interrupt is being used.
+    Parameters: interruptNumber - interrupt number that will use SPI
+    Example: SPI.usingInterrupt(digitalPinToInterrupt(2));
+
+13. beginTransaction()
+    Syntax: void SPI.beginTransaction(SPISettings)
+    Description: Initialize SPI bus with specified settings and take control.
+    Parameters: SPISettings object with clock, bit order, and data mode
+    Example: SPI.beginTransaction(SPISettings(14000000, MSBFIRST, SPI_MODE0));
+
+14. endTransaction()
+    Syntax: void SPI.endTransaction()
+    Description: Stop using the SPI bus and release control.
+    Example: SPI.endTransaction();
+
+15. SPISettings()
+    Syntax: SPISettings mySettings(clock, bitOrder, dataMode)
+    Description: Create SPI configuration object.
+    Parameters: 
+      - clock: SPI clock frequency in Hz
+      - bitOrder: MSBFIRST or LSBFIRST
+      - dataMode: SPI_MODE0, SPI_MODE1, SPI_MODE2, or SPI_MODE3
+    Example: SPISettings mySettings(4000000, MSBFIRST, SPI_MODE0);
+
+16. pinIsChipSelect()
+    Syntax: bool SPI.pinIsChipSelect(pin)
+    Description: Check if specified pin can be used as chip select.
+    Parameters: pin - pin number to check
+    Returns: true if pin can be CS
+    Example: if(SPI.pinIsChipSelect(10)) { ... }
+
+17. pinIsMOSI()
+    Syntax: bool SPI.pinIsMOSI(pin)
+    Description: Check if specified pin can be used as MOSI.
+    Parameters: pin - pin number to check
+    Returns: true if pin can be MOSI
+    Example: if(SPI.pinIsMOSI(11)) { ... }
+
+18. pinIsMISO()
+    Syntax: bool SPI.pinIsMISO(pin)
+    Description: Check if specified pin can be used as MISO.
+    Parameters: pin - pin number to check
+    Returns: true if pin can be MISO
+    Example: if(SPI.pinIsMISO(12)) { ... }
+
+19. pinIsSCK()
+    Syntax: bool SPI.pinIsSCK(pin)
+    Description: Check if specified pin can be used as SCK.
+    Parameters: pin - pin number to check
+    Returns: true if pin can be SCK
+    Example: if(SPI.pinIsSCK(13)) { ... }
+
+
+CONSTANTS
+---------
+
+Clock Divider Constants (Deprecated):
+- SPI_CLOCK_DIV2    - Divide system clock by 2
+- SPI_CLOCK_DIV4    - Divide system clock by 4
+- SPI_CLOCK_DIV8    - Divide system clock by 8
+- SPI_CLOCK_DIV16   - Divide system clock by 16
+- SPI_CLOCK_DIV32   - Divide system clock by 32
+- SPI_CLOCK_DIV64   - Divide system clock by 64
+- SPI_CLOCK_DIV128  - Divide system clock by 128
+
+SPI Mode Constants:
+- SPI_MODE0  - CPOL=0, CPHA=0 (Clock idle low, sample on leading edge)
+- SPI_MODE1  - CPOL=0, CPHA=1 (Clock idle low, sample on trailing edge)
+- SPI_MODE2  - CPOL=1, CPHA=0 (Clock idle high, sample on leading edge)
+- SPI_MODE3  - CPOL=1, CPHA=1 (Clock idle high, sample on trailing edge)
+
+Bit Order Constants:
+- MSBFIRST   - Most Significant Bit first (default)
+- LSBFIRST   - Least Significant Bit first
+
+
+SPI MODE DETAILS
+----------------
+
+Mode    CPOL    CPHA    Clock Polarity          Sampling Edge
+----    ----    ----    --------------          -------------
+  0      0       0      Idle Low                Leading (Rising)
+  1      0       1      Idle Low                Trailing (Falling)
+  2      1       0      Idle High               Leading (Falling)
+  3      1       1      Idle High               Trailing (Rising)
+
+CPOL - Clock Polarity: Determines idle state of clock
+CPHA - Clock Phase: Determines when data is sampled
+
+
+DEFAULT PINS
+------------
+
+Arduino Uno/Nano:
+- MOSI: Pin 11
+- MISO: Pin 12
+- SCK:  Pin 13
+- SS:   Pin 10
+
+Arduino Mega:
+- MOSI: Pin 51
+- MISO: Pin 50
+- SCK:  Pin 52
+- SS:   Pin 53
+
+Arduino Due:
+- SPI:  ICSP header
+- SPI1: Pins 74, 75, 76
+- MOSI: Pin 75
+- MISO: Pin 74
+- SCK:  Pin 76
+
+
+BASIC USAGE EXAMPLES
+--------------------
+
+Example 1: Basic SPI Communication (Modern Method)
+---------------------------------------------------
+#include <SPI.h>
+
+const int CS_PIN = 10;
+
+void setup() {
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  
+  SPI.begin();
+}
+
+void loop() {
+  // Configure SPI settings
+  SPISettings mySettings(4000000, MSBFIRST, SPI_MODE0);
+  
+  // Begin transaction
+  SPI.beginTransaction(mySettings);
+  digitalWrite(CS_PIN, LOW);
+  
+  // Transfer data
+  byte receivedData = SPI.transfer(0xAA);
+  
+  // End transaction
+  digitalWrite(CS_PIN, HIGH);
+  SPI.endTransaction();
+  
+  delay(1000);
+}
+
+
+Example 2: Multiple Byte Transfer
+----------------------------------
+#include <SPI.h>
+
+const int CS_PIN = 10;
+
+void setup() {
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  SPI.begin();
+}
+
+void loop() {
+  byte dataToSend[] = {0x01, 0x02, 0x03, 0x04, 0x05};
+  byte dataReceived[5];
+  
+  SPI.beginTransaction(SPISettings(1000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(CS_PIN, LOW);
+  
+  // Transfer multiple bytes
+  for(int i = 0; i < 5; i++) {
+    dataReceived[i] = SPI.transfer(dataToSend[i]);
+  }
+  
+  digitalWrite(CS_PIN, HIGH);
+  SPI.endTransaction();
+  
+  delay(1000);
+}
+
+
+Example 3: 16-bit Transfer
+---------------------------
+#include <SPI.h>
+
+const int CS_PIN = 10;
+
+void setup() {
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  SPI.begin();
+}
+
+void loop() {
+  SPI.beginTransaction(SPISettings(8000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(CS_PIN, LOW);
+  
+  // Transfer 16-bit value
+  uint16_t data = SPI.transfer16(0xABCD);
+  
+  digitalWrite(CS_PIN, HIGH);
+  SPI.endTransaction();
+  
+  delay(100);
+}
+
+
+Example 4: Reading from SPI Device
+-----------------------------------
+#include <SPI.h>
+
+const int CS_PIN = 10;
+
+void setup() {
+  Serial.begin(9600);
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  SPI.begin();
+}
+
+void loop() {
+  byte readValue;
+  
+  SPI.beginTransaction(SPISettings(2000000, MSBFIRST, SPI_MODE0));
+  digitalWrite(CS_PIN, LOW);
+  
+  // Send read command
+  SPI.transfer(0x03);  // Read command
+  SPI.transfer(0x00);  // Address high
+  SPI.transfer(0x00);  // Address low
+  
+  // Read data
+  readValue = SPI.transfer(0x00);  // Dummy byte to receive data
+  
+  digitalWrite(CS_PIN, HIGH);
+  SPI.endTransaction();
+  
+  Serial.println(readValue, HEX);
+  delay(1000);
+}
+
+
+Example 5: Multiple SPI Devices
+--------------------------------
+#include <SPI.h>
+
+const int CS_PIN_1 = 10;
+const int CS_PIN_2 = 9;
+
+SPISettings device1(4000000, MSBFIRST, SPI_MODE0);
+SPISettings device2(1000000, LSBFIRST, SPI_MODE3);
+
+void setup() {
+  pinMode(CS_PIN_1, OUTPUT);
+  pinMode(CS_PIN_2, OUTPUT);
+  digitalWrite(CS_PIN_1, HIGH);
+  digitalWrite(CS_PIN_2, HIGH);
+  
+  SPI.begin();
+}
+
+void loop() {
+  // Communicate with device 1
+  SPI.beginTransaction(device1);
+  digitalWrite(CS_PIN_1, LOW);
+  SPI.transfer(0x55);
+  digitalWrite(CS_PIN_1, HIGH);
+  SPI.endTransaction();
+  
+  delay(10);
+  
+  // Communicate with device 2
+  SPI.beginTransaction(device2);
+  digitalWrite(CS_PIN_2, LOW);
+  SPI.transfer(0xAA);
+  digitalWrite(CS_PIN_2, HIGH);
+  SPI.endTransaction();
+  
+  delay(1000);
+}
+
+
+Example 6: Legacy Method (Not Recommended)
+-------------------------------------------
+#include <SPI.h>
+
+const int CS_PIN = 10;
+
+void setup() {
+  pinMode(CS_PIN, OUTPUT);
+  digitalWrite(CS_PIN, HIGH);
+  
+  SPI.begin();
+  SPI.setBitOrder(MSBFIRST);
+  SPI.setDataMode(SPI_MODE0);
+  SPI.setClockDivider(SPI_CLOCK_DIV4);
+}
+
+void loop() {
+  digitalWrite(CS_PIN, LOW);
+  SPI.transfer(0x42);
+  digitalWrite(CS_PIN, HIGH);
+  
+  delay(1000);
+}
+
+
+BEST PRACTICES
+--------------
+
+1. Always use SPISettings with beginTransaction/endTransaction for modern code
+2. Control CS (Chip Select) pin manually - SPI library doesn't manage it
+3. Pull CS HIGH when not communicating (inactive state)
+4. Pull CS LOW to activate device before transfer
+5. Use appropriate clock speed for your device (check datasheet)
+6. Most devices use MSBFIRST and SPI_MODE0
+7. Always call endTransaction() after beginTransaction()
+8. Don't use deprecated functions (setBitOrder, setDataMode, setClockDivider)
+
+
+COMMON CLOCK SPEEDS
+-------------------
+
+Typical SPI clock frequencies:
+- 250 kHz    - Very slow, very reliable
+- 1 MHz      - Slow, long wires okay
+- 4 MHz      - Common for many devices
+- 8 MHz      - Fast, short wires recommended
+- 10 MHz     - Very fast
+- 14 MHz     - Maximum for many Arduino boards
+- 16 MHz     - Maximum for Uno (system clock)
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: No communication
+Solution: Check connections (MOSI, MISO, SCK, CS, GND), verify SPI mode
+
+Problem: Garbage data
+Solution: Check clock speed, verify bit order, check SPI mode
+
+Problem: Works sometimes
+Solution: Add delays, reduce clock speed, check wiring quality
+
+Problem: Multiple devices interfere
+Solution: Ensure unique CS pins, use proper beginTransaction/endTransaction
