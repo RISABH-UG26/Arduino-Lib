@@ -35,6 +35,14 @@ Currently, this repository contains documentation for the following Arduino libr
    - File: `Adafruit_SSD1306_Reference.txt`
    - Functions: 41 methods for OLED display control, scrolling, and graphics (inherits from GFX)
 
+6. **Servo** - Servo motor control library
+   - File: `Servo_Reference.txt`
+   - Functions: 6 methods for attaching, controlling, and reading servo positions
+
+7. **Serial & Bluetooth** - Serial communication libraries (HardwareSerial, SoftwareSerial, BluetoothSerial)
+   - File: `Serial_Bluetooth_Reference.txt`
+   - Functions: 39 methods for serial communication, data parsing, and Bluetooth connectivity
+
 ## 🎯 Purpose
 
 The goal of this repository is to provide a centralized, easy-to-access reference for Arduino library functions without needing to search through source code or online documentation. Each library reference includes:

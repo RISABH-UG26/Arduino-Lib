@@ -1,0 +1,664 @@
+Serial & Bluetooth Serial Library Reference for Arduino
+========================================================
+
+CLASSES
+-------
+HardwareSerial - Built-in serial communication (Serial, Serial1, Serial2, Serial3)
+SoftwareSerial - Software-based serial communication on any pins
+BluetoothSerial - Bluetooth serial communication (ESP32)
+
+
+HARDWARE SERIAL FUNCTIONS (Serial)
+-----------------------------------
+
+1. begin()
+   Syntax: void begin(unsigned long baud)
+           void begin(unsigned long baud, uint8_t config)
+   Description: Initialize serial communication with specified baud rate.
+   Parameters:
+     - baud: bits per second (300, 1200, 2400, 4800, 9600, 14400, 19200, 28800, 38400, 57600, 115200)
+     - config: data/parity/stop bits configuration (optional)
+   Example: Serial.begin(9600);
+            Serial.begin(115200, SERIAL_8N1);
+
+2. end()
+   Syntax: void end()
+   Description: Disable serial communication.
+   Example: Serial.end();
+
+3. available()
+   Syntax: int available()
+   Description: Get number of bytes available for reading.
+   Returns: Number of bytes in receive buffer
+   Example: if(Serial.available() > 0) { ... }
+
+4. availableForWrite()
+   Syntax: int availableForWrite()
+   Description: Get space available in transmit buffer.
+   Returns: Number of bytes available for writing
+   Example: int space = Serial.availableForWrite();
+
+5. read()
+   Syntax: int read()
+   Description: Read single byte from serial buffer.
+   Returns: First byte of incoming data (-1 if no data)
+   Example: char c = Serial.read();
+
+6. peek()
+   Syntax: int peek()
+   Description: Read byte without removing from buffer.
+   Returns: First byte (-1 if no data)
+   Example: char c = Serial.peek();
+
+7. write()
+   Syntax: size_t write(uint8_t byte)
+           size_t write(const char *str)
+           size_t write(const uint8_t *buffer, size_t size)
+   Description: Write binary data to serial port.
+   Returns: Number of bytes written
+   Example: Serial.write(65); // Sends 'A'
+            Serial.write("Hello");
+
+8. print()
+   Syntax: size_t print(data)
+           size_t print(data, format)
+   Description: Print data as human-readable ASCII text.
+   Parameters: format - BIN, OCT, DEC, HEX (for numbers)
+   Example: Serial.print("Temperature: ");
+            Serial.print(25.5);
+            Serial.print(255, HEX);
+
+9. println()
+   Syntax: size_t println()
+           size_t println(data)
+           size_t println(data, format)
+   Description: Print data with newline character.
+   Example: Serial.println("Hello World");
+            Serial.println(123);
+
+10. flush()
+    Syntax: void flush()
+    Description: Wait for outgoing data to finish transmitting.
+    Example: Serial.flush();
+
+11. readBytes()
+    Syntax: size_t readBytes(char *buffer, size_t length)
+    Description: Read multiple bytes into buffer.
+    Returns: Number of bytes read
+    Example: char buffer[10];
+             Serial.readBytes(buffer, 10);
+
+12. readBytesUntil()
+    Syntax: size_t readBytesUntil(char terminator, char *buffer, size_t length)
+    Description: Read bytes until terminator character found.
+    Example: Serial.readBytesUntil('\n', buffer, 50);
+
+13. readString()
+    Syntax: String readString()
+    Description: Read entire serial buffer into String.
+    Returns: String object
+    Example: String data = Serial.readString();
+
+14. readStringUntil()
+    Syntax: String readStringUntil(char terminator)
+    Description: Read until terminator character.
+    Returns: String object
+    Example: String line = Serial.readStringUntil('\n');
+
+15. parseInt()
+    Syntax: long parseInt()
+           long parseInt(LookaheadMode lookahead)
+           long parseInt(LookaheadMode lookahead, char ignore)
+    Description: Parse integer from serial data.
+    Returns: Parsed integer value
+    Example: int value = Serial.parseInt();
+
+16. parseFloat()
+    Syntax: float parseFloat()
+           float parseFloat(LookaheadMode lookahead)
+           float parseFloat(LookaheadMode lookahead, char ignore)
+    Description: Parse float from serial data.
+    Returns: Parsed float value
+    Example: float value = Serial.parseFloat();
+
+17. setTimeout()
+    Syntax: void setTimeout(unsigned long timeout)
+    Description: Set timeout for read functions (milliseconds).
+    Parameters: timeout - timeout in ms (default 1000)
+    Example: Serial.setTimeout(5000);
+
+18. find()
+    Syntax: bool find(char *target)
+           bool find(char *target, size_t length)
+    Description: Search for target string in serial data.
+    Returns: true if found
+    Example: if(Serial.find("OK")) { ... }
+
+19. findUntil()
+    Syntax: bool findUntil(char *target, char *terminator)
+    Description: Search for target until terminator found.
+    Returns: true if target found
+    Example: Serial.findUntil("DATA:", "\n");
+
+
+SERIAL PORT OBJECTS
+-------------------
+
+Serial   - USB serial (pins 0 RX, 1 TX on Uno)
+Serial1  - Hardware serial 1 (pins 19 RX, 18 TX on Mega)
+Serial2  - Hardware serial 2 (pins 17 RX, 16 TX on Mega)
+Serial3  - Hardware serial 3 (pins 15 RX, 14 TX on Mega)
+
+Note: Arduino Uno has only Serial (USB)
+      Arduino Mega has Serial, Serial1, Serial2, Serial3
+
+
+SOFTWARE SERIAL FUNCTIONS
+--------------------------
+
+#include <SoftwareSerial.h>
+
+20. SoftwareSerial()
+    Syntax: SoftwareSerial(rxPin, txPin)
+            SoftwareSerial(rxPin, txPin, inverse_logic)
+    Description: Create SoftwareSerial object.
+    Parameters: rxPin, txPin - pin numbers for RX and TX
+    Example: SoftwareSerial mySerial(10, 11);
+
+21. begin() [SoftwareSerial]
+    Syntax: void begin(long speed)
+    Description: Initialize software serial with baud rate.
+    Parameters: speed - baud rate (up to 115200)
+    Example: mySerial.begin(9600);
+
+22. listen()
+    Syntax: bool listen()
+    Description: Enable this SoftwareSerial port to listen.
+    Returns: true if successful
+    Example: mySerial.listen();
+
+23. isListening()
+    Syntax: bool isListening()
+    Description: Check if this port is currently listening.
+    Returns: true if listening
+    Example: if(mySerial.isListening()) { ... }
+
+24. overflow()
+    Syntax: bool overflow()
+    Description: Check if buffer overflow occurred.
+    Returns: true if overflow detected
+    Example: if(mySerial.overflow()) { ... }
+
+Note: SoftwareSerial also has read(), write(), available(), 
+      print(), println() and other methods like HardwareSerial.
+
+
+BLUETOOTH SERIAL FUNCTIONS (ESP32)
+-----------------------------------
+
+#include <BluetoothSerial.h>
+
+25. BluetoothSerial()
+    Syntax: BluetoothSerial()
+    Description: Create Bluetooth serial object.
+    Example: BluetoothSerial SerialBT;
+
+26. begin() [BluetoothSerial]
+    Syntax: bool begin(String localName)
+           bool begin(String localName, bool isMaster)
+    Description: Initialize Bluetooth with device name.
+    Parameters: localName - Bluetooth device name
+    Returns: true if successful
+    Example: SerialBT.begin("ESP32_BT");
+
+27. end() [BluetoothSerial]
+    Syntax: void end()
+    Description: Disable Bluetooth.
+    Example: SerialBT.end();
+
+28. available() [BluetoothSerial]
+    Syntax: int available()
+    Description: Get bytes available for reading.
+    Example: if(SerialBT.available()) { ... }
+
+29. read() [BluetoothSerial]
+    Syntax: int read()
+    Description: Read byte from Bluetooth.
+    Example: char c = SerialBT.read();
+
+30. write() [BluetoothSerial]
+    Syntax: size_t write(uint8_t c)
+    Description: Write byte to Bluetooth.
+    Example: SerialBT.write('A');
+
+31. print() [BluetoothSerial]
+    Syntax: size_t print(...)
+    Description: Print data over Bluetooth.
+    Example: SerialBT.print("Hello");
+
+32. println() [BluetoothSerial]
+    Syntax: size_t println(...)
+    Description: Print with newline over Bluetooth.
+    Example: SerialBT.println("Data");
+
+33. hasClient()
+    Syntax: bool hasClient()
+    Description: Check if Bluetooth client is connected.
+    Returns: true if connected
+    Example: if(SerialBT.hasClient()) { ... }
+
+34. enableSSP()
+    Syntax: void enableSSP()
+    Description: Enable Secure Simple Pairing.
+    Example: SerialBT.enableSSP();
+
+35. setPin()
+    Syntax: bool setPin(const char *pin)
+    Description: Set Bluetooth PIN code.
+    Parameters: pin - 4-digit PIN string
+    Returns: true if successful
+    Example: SerialBT.setPin("1234");
+
+36. unpairDevice()
+    Syntax: bool unpairDevice(uint8_t *address)
+    Description: Unpair Bluetooth device.
+    Example: SerialBT.unpairDevice(deviceAddress);
+
+37. connect()
+    Syntax: bool connect(String remoteName)
+           bool connect(uint8_t *address)
+    Description: Connect to remote Bluetooth device.
+    Example: SerialBT.connect("HC-05");
+
+38. disconnect()
+    Syntax: bool disconnect()
+    Description: Disconnect from Bluetooth device.
+    Example: SerialBT.disconnect();
+
+39. connected()
+    Syntax: bool connected(int timeout)
+    Description: Check if connected within timeout.
+    Example: if(SerialBT.connected(1000)) { ... }
+
+
+SERIAL CONFIGURATION CONSTANTS
+-------------------------------
+
+Baud Rates:
+- 300, 600, 1200, 2400, 4800, 9600
+- 14400, 19200, 28800, 38400, 57600, 115200
+- 230400, 460800, 921600 (high speed)
+
+Data/Parity/Stop Configuration:
+- SERIAL_5N1 - 5 data, no parity, 1 stop bit
+- SERIAL_6N1 - 6 data, no parity, 1 stop bit
+- SERIAL_7N1 - 7 data, no parity, 1 stop bit
+- SERIAL_8N1 - 8 data, no parity, 1 stop bit (default)
+- SERIAL_5N2 - 5 data, no parity, 2 stop bits
+- SERIAL_6N2 - 6 data, no parity, 2 stop bits
+- SERIAL_7N2 - 7 data, no parity, 2 stop bits
+- SERIAL_8N2 - 8 data, no parity, 2 stop bits
+- SERIAL_5E1 - 5 data, even parity, 1 stop bit
+- SERIAL_6E1 - 6 data, even parity, 1 stop bit
+- SERIAL_7E1 - 7 data, even parity, 1 stop bit
+- SERIAL_8E1 - 8 data, even parity, 1 stop bit
+- SERIAL_5E2 - 5 data, even parity, 2 stop bits
+- SERIAL_6E2 - 6 data, even parity, 2 stop bits
+- SERIAL_7E2 - 7 data, even parity, 2 stop bits
+- SERIAL_8E2 - 8 data, even parity, 2 stop bits
+- SERIAL_5O1 - 5 data, odd parity, 1 stop bit
+- SERIAL_6O1 - 6 data, odd parity, 1 stop bit
+- SERIAL_7O1 - 7 data, odd parity, 1 stop bit
+- SERIAL_8O1 - 8 data, odd parity, 1 stop bit
+- SERIAL_5O2 - 5 data, odd parity, 2 stop bits
+- SERIAL_6O2 - 6 data, odd parity, 2 stop bits
+- SERIAL_7O2 - 7 data, odd parity, 2 stop bits
+- SERIAL_8O2 - 8 data, odd parity, 2 stop bits
+
+Print Format Constants:
+- BIN  - Binary format
+- OCT  - Octal format
+- DEC  - Decimal format (default)
+- HEX  - Hexadecimal format
+
+
+BASIC USAGE EXAMPLES
+--------------------
+
+Example 1: Simple Serial Communication
+---------------------------------------
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Arduino Ready");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    char incoming = Serial.read();
+    Serial.print("Received: ");
+    Serial.println(incoming);
+  }
+}
+
+
+Example 2: Reading String from Serial
+--------------------------------------
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String message = Serial.readStringUntil('\n');
+    Serial.print("You sent: ");
+    Serial.println(message);
+  }
+}
+
+
+Example 3: Parsing Integer Input
+---------------------------------
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Enter a number:");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    int number = Serial.parseInt();
+    if (number != 0) {
+      Serial.print("Number squared: ");
+      Serial.println(number * number);
+    }
+  }
+}
+
+
+Example 4: SoftwareSerial with GPS/Bluetooth Module
+----------------------------------------------------
+#include <SoftwareSerial.h>
+
+SoftwareSerial mySerial(10, 11); // RX, TX
+
+void setup() {
+  Serial.begin(9600);
+  mySerial.begin(9600);
+  Serial.println("Software Serial Ready");
+}
+
+void loop() {
+  // Read from software serial, print to hardware serial
+  if (mySerial.available()) {
+    char c = mySerial.read();
+    Serial.write(c);
+  }
+  
+  // Read from hardware serial, send to software serial
+  if (Serial.available()) {
+    char c = Serial.read();
+    mySerial.write(c);
+  }
+}
+
+
+Example 5: Bluetooth Serial (ESP32)
+------------------------------------
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerialBT;
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.begin("ESP32_Bluetooth");
+  Serial.println("Bluetooth Started");
+}
+
+void loop() {
+  if (SerialBT.available()) {
+    String message = SerialBT.readString();
+    Serial.print("BT Received: ");
+    Serial.println(message);
+    SerialBT.println("Message received!");
+  }
+  
+  if (Serial.available()) {
+    String message = Serial.readString();
+    SerialBT.println(message);
+  }
+}
+
+
+Example 6: Command Parser
+--------------------------
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Command Parser Ready");
+  Serial.println("Commands: LED ON, LED OFF, STATUS");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String command = Serial.readStringUntil('\n');
+    command.trim();
+    command.toUpperCase();
+    
+    if (command == "LED ON") {
+      digitalWrite(13, HIGH);
+      Serial.println("LED turned ON");
+    }
+    else if (command == "LED OFF") {
+      digitalWrite(13, LOW);
+      Serial.println("LED turned OFF");
+    }
+    else if (command == "STATUS") {
+      Serial.print("LED Status: ");
+      Serial.println(digitalRead(13) ? "ON" : "OFF");
+    }
+    else {
+      Serial.println("Unknown command");
+    }
+  }
+}
+
+
+Example 7: Binary Data Transfer
+--------------------------------
+void setup() {
+  Serial.begin(115200);
+}
+
+void loop() {
+  // Send binary data
+  byte data[] = {0xFF, 0x00, 0xAA, 0x55};
+  Serial.write(data, 4);
+  
+  delay(1000);
+}
+
+
+Example 8: Multiple Serial Ports (Arduino Mega)
+------------------------------------------------
+void setup() {
+  Serial.begin(9600);    // USB
+  Serial1.begin(9600);   // Hardware serial 1
+  Serial2.begin(9600);   // Hardware serial 2
+  
+  Serial.println("Multiple Serial Demo");
+}
+
+void loop() {
+  // Bridge Serial1 to Serial2
+  if (Serial1.available()) {
+    char c = Serial1.read();
+    Serial2.write(c);
+    Serial.write(c); // Echo to USB
+  }
+}
+
+
+Example 9: CSV Data Logging
+----------------------------
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Time,Temp,Humidity");
+}
+
+void loop() {
+  unsigned long time = millis();
+  float temp = 25.5;  // From sensor
+  int humidity = 65;   // From sensor
+  
+  Serial.print(time);
+  Serial.print(",");
+  Serial.print(temp);
+  Serial.print(",");
+  Serial.println(humidity);
+  
+  delay(1000);
+}
+
+
+Example 10: Reading Comma-Separated Values
+-------------------------------------------
+void setup() {
+  Serial.begin(9600);
+  Serial.println("Send: value1,value2,value3");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    String input = Serial.readStringUntil('\n');
+    
+    int comma1 = input.indexOf(',');
+    int comma2 = input.indexOf(',', comma1 + 1);
+    
+    String val1 = input.substring(0, comma1);
+    String val2 = input.substring(comma1 + 1, comma2);
+    String val3 = input.substring(comma2 + 1);
+    
+    Serial.println("Parsed values:");
+    Serial.println(val1);
+    Serial.println(val2);
+    Serial.println(val3);
+  }
+}
+
+
+Example 11: Bluetooth LED Control (ESP32)
+------------------------------------------
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerialBT;
+const int LED = 2;
+
+void setup() {
+  pinMode(LED, OUTPUT);
+  SerialBT.begin("ESP32_LED");
+}
+
+void loop() {
+  if (SerialBT.available()) {
+    char command = SerialBT.read();
+    
+    if (command == '1') {
+      digitalWrite(LED, HIGH);
+      SerialBT.println("LED ON");
+    }
+    else if (command == '0') {
+      digitalWrite(LED, LOW);
+      SerialBT.println("LED OFF");
+    }
+  }
+}
+
+
+Example 12: Bluetooth with PIN (ESP32)
+---------------------------------------
+#include <BluetoothSerial.h>
+
+BluetoothSerial SerialBT;
+
+void setup() {
+  Serial.begin(115200);
+  SerialBT.setPin("1234");
+  SerialBT.begin("ESP32_Secure");
+  Serial.println("Bluetooth with PIN: 1234");
+}
+
+void loop() {
+  if (SerialBT.available()) {
+    Serial.write(SerialBT.read());
+  }
+  if (Serial.available()) {
+    SerialBT.write(Serial.read());
+  }
+}
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: No data received
+Solutions:
+- Check baud rate matches on both ends
+- Verify RX/TX connections (RX to TX, TX to RX)
+- Ensure common ground connection
+- Check voltage levels (3.3V vs 5V)
+
+Problem: Garbage characters
+Solutions:
+- Verify baud rate is correct
+- Check for loose connections
+- Verify serial configuration (8N1, etc.)
+- Reduce baud rate for long cables
+
+Problem: SoftwareSerial unreliable
+Solutions:
+- Use lower baud rates (9600 or less)
+- Avoid using interrupt-heavy code
+- Consider using hardware serial if available
+- Check for timing conflicts with other libraries
+
+Problem: Bluetooth won't connect
+Solutions:
+- Ensure Bluetooth is enabled on device
+- Check device name spelling
+- Verify PIN if set
+- Unpair and re-pair devices
+- Check for existing connections
+
+Problem: Buffer overflow
+Solutions:
+- Read data more frequently
+- Increase buffer size (modify library)
+- Reduce data transmission rate
+- Use flow control
+
+
+BEST PRACTICES
+--------------
+
+1. Always check available() before read()
+2. Use readStringUntil() for line-based protocols
+3. Set appropriate timeout for parsing functions
+4. Clear input buffer when needed: while(Serial.read() >= 0);
+5. Use println() for human-readable output
+6. Use write() for binary data
+7. Match baud rates on both devices
+8. Don't use Serial pins (0,1) for other purposes on Uno
+9. Use hardware serial when possible (faster, more reliable)
+10. Add delays in tight loops reading serial data
+
+
+SERIAL MONITOR TIPS
+-------------------
+
+Settings to check:
+- Baud rate must match code
+- Line ending: "Both NL & CR" or "Newline" for readStringUntil('\n')
+- Choose appropriate line ending for your protocol
+
+Keyboard shortcuts:
+- Ctrl+Enter: Send without line ending
+- Ctrl+Shift+M: Open Serial Monitor
+- Timestamp option for debugging timing

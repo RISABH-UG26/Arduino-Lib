@@ -1,0 +1,545 @@
+Servo Library Reference for Arduino
+====================================
+
+CLASS
+-----
+Servo - Control RC servo motors
+
+
+FUNCTIONS & METHODS
+-------------------
+
+1. attach()
+   Syntax: uint8_t attach(int pin)
+           uint8_t attach(int pin, int min, int max)
+   Description: Attach Servo variable to a pin. Optionally set min/max pulse widths.
+   Parameters:
+     - pin: pin number to attach servo
+     - min: minimum pulse width in microseconds (default 544)
+     - max: maximum pulse width in microseconds (default 2400)
+   Returns: Channel number or 0 if failure
+   Example: myservo.attach(9);
+            myservo.attach(9, 1000, 2000);
+
+2. detach()
+   Syntax: void detach()
+   Description: Detach servo from its pin. Stops sending pulses.
+   Example: myservo.detach();
+
+3. write()
+   Syntax: void write(int value)
+   Description: Write angle to servo (0-180 degrees).
+   Parameters: value - angle in degrees (0-180)
+   Example: myservo.write(90);
+
+4. writeMicroseconds()
+   Syntax: void writeMicroseconds(int value)
+   Description: Write pulse width in microseconds to servo.
+   Parameters: value - pulse width in microseconds (typically 1000-2000)
+   Example: myservo.writeMicroseconds(1500);
+
+5. read()
+   Syntax: int read()
+   Description: Read current angle of servo.
+   Returns: Angle in degrees (0-180)
+   Example: int angle = myservo.read();
+
+6. attached()
+   Syntax: bool attached()
+   Description: Check if servo is attached to a pin.
+   Returns: true if attached, false otherwise
+   Example: if(myservo.attached()) { ... }
+
+
+CONSTANTS
+---------
+
+Default Values:
+- MIN_PULSE_WIDTH: 544 microseconds
+- MAX_PULSE_WIDTH: 2400 microseconds
+- DEFAULT_PULSE_WIDTH: 1500 microseconds
+- REFRESH_INTERVAL: 20000 microseconds (20ms)
+
+Angle Range:
+- Minimum: 0 degrees
+- Maximum: 180 degrees
+
+Maximum Servos:
+- Arduino Uno/Nano: 12 servos
+- Arduino Mega: 48 servos
+
+
+BASIC USAGE EXAMPLE
+-------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  myservo.attach(9);  // Attach servo to pin 9
+}
+
+void loop() {
+  myservo.write(0);    // Move to 0 degrees
+  delay(1000);
+  myservo.write(90);   // Move to 90 degrees
+  delay(1000);
+  myservo.write(180);  // Move to 180 degrees
+  delay(1000);
+}
+
+
+EXAMPLE: Sweep Servo
+--------------------
+
+#include <Servo.h>
+
+Servo myservo;
+int pos = 0;
+
+void setup() {
+  myservo.attach(9);
+}
+
+void loop() {
+  // Sweep from 0 to 180 degrees
+  for (pos = 0; pos <= 180; pos += 1) {
+    myservo.write(pos);
+    delay(15);
+  }
+  
+  // Sweep from 180 to 0 degrees
+  for (pos = 180; pos >= 0; pos -= 1) {
+    myservo.write(pos);
+    delay(15);
+  }
+}
+
+
+EXAMPLE: Control with Potentiometer
+------------------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+int potPin = A0;
+int val;
+
+void setup() {
+  myservo.attach(9);
+}
+
+void loop() {
+  val = analogRead(potPin);
+  val = map(val, 0, 1023, 0, 180);
+  myservo.write(val);
+  delay(15);
+}
+
+
+EXAMPLE: Multiple Servos
+-------------------------
+
+#include <Servo.h>
+
+Servo servo1;
+Servo servo2;
+Servo servo3;
+
+void setup() {
+  servo1.attach(9);
+  servo2.attach(10);
+  servo3.attach(11);
+}
+
+void loop() {
+  servo1.write(45);
+  servo2.write(90);
+  servo3.write(135);
+  delay(1000);
+  
+  servo1.write(135);
+  servo2.write(90);
+  servo3.write(45);
+  delay(1000);
+}
+
+
+EXAMPLE: Using Microseconds
+----------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  myservo.attach(9);
+}
+
+void loop() {
+  // Center position (1500μs)
+  myservo.writeMicroseconds(1500);
+  delay(1000);
+  
+  // Minimum position (1000μs)
+  myservo.writeMicroseconds(1000);
+  delay(1000);
+  
+  // Maximum position (2000μs)
+  myservo.writeMicroseconds(2000);
+  delay(1000);
+}
+
+
+EXAMPLE: Attach and Detach
+---------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+  // Attach and move servo
+  myservo.attach(9);
+  Serial.println("Servo attached");
+  
+  myservo.write(90);
+  delay(2000);
+  
+  // Detach to save power
+  myservo.detach();
+  Serial.println("Servo detached");
+  delay(2000);
+}
+
+
+EXAMPLE: Serial Control
+------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  Serial.begin(9600);
+  myservo.attach(9);
+  Serial.println("Enter angle (0-180):");
+}
+
+void loop() {
+  if (Serial.available() > 0) {
+    int angle = Serial.parseInt();
+    
+    if (angle >= 0 && angle <= 180) {
+      myservo.write(angle);
+      Serial.print("Servo moved to: ");
+      Serial.println(angle);
+    } else {
+      Serial.println("Invalid angle! (0-180)");
+    }
+  }
+}
+
+
+EXAMPLE: Read Current Position
+-------------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  Serial.begin(9600);
+  myservo.attach(9);
+}
+
+void loop() {
+  myservo.write(45);
+  delay(500);
+  Serial.print("Current position: ");
+  Serial.println(myservo.read());
+  
+  myservo.write(135);
+  delay(500);
+  Serial.print("Current position: ");
+  Serial.println(myservo.read());
+  
+  delay(1000);
+}
+
+
+EXAMPLE: Smooth Movement
+-------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  myservo.attach(9);
+}
+
+void smoothMove(int targetAngle, int speed) {
+  int currentAngle = myservo.read();
+  
+  if (currentAngle < targetAngle) {
+    for (int pos = currentAngle; pos <= targetAngle; pos++) {
+      myservo.write(pos);
+      delay(speed);
+    }
+  } else {
+    for (int pos = currentAngle; pos >= targetAngle; pos--) {
+      myservo.write(pos);
+      delay(speed);
+    }
+  }
+}
+
+void loop() {
+  smoothMove(180, 15);
+  delay(500);
+  smoothMove(0, 15);
+  delay(500);
+}
+
+
+EXAMPLE: Calibration
+--------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+void setup() {
+  Serial.begin(9600);
+  
+  // Attach with custom pulse width range
+  // Adjust min and max for your specific servo
+  myservo.attach(9, 600, 2400);
+  
+  Serial.println("Servo calibrated");
+}
+
+void loop() {
+  myservo.write(0);
+  delay(2000);
+  myservo.write(90);
+  delay(2000);
+  myservo.write(180);
+  delay(2000);
+}
+
+
+PULSE WIDTH TO ANGLE RELATIONSHIP
+----------------------------------
+
+Standard Servo:
+- 0°   = ~544-1000μs
+- 90°  = ~1500μs (center)
+- 180° = ~2000-2400μs
+
+Continuous Rotation Servo:
+- Full speed CCW = ~1000μs
+- Stop = ~1500μs
+- Full speed CW = ~2000μs
+
+
+SERVO TYPES
+-----------
+
+Standard Servo:
+- Rotates 0-180 degrees
+- Position controlled
+- Most common type
+
+Continuous Rotation Servo:
+- Rotates continuously
+- Speed controlled (not position)
+- Use writeMicroseconds() for precise control
+- 1500μs = stop, <1500μs = CCW, >1500μs = CW
+
+180+ Degree Servo:
+- Can rotate more than 180 degrees
+- Use writeMicroseconds() for full range
+- Requires calibration
+
+
+POWER CONSIDERATIONS
+--------------------
+
+Important Notes:
+1. Servos can draw significant current (100-500mA or more)
+2. Do NOT power servos directly from Arduino 5V pin
+3. Use external power supply for servos
+4. Connect grounds together (Arduino GND to power supply GND)
+5. Use capacitor (100-470μF) across servo power supply
+
+Recommended Power Supply:
+- 4.8V-6V for most servos
+- Check servo specifications
+- Use adequate current rating (1A+ for multiple servos)
+
+
+WIRING
+------
+
+Standard Servo Wire Colors:
+- Brown/Black: Ground (GND)
+- Red: Power (VCC - typically 5V)
+- Orange/Yellow/White: Signal (PWM pin)
+
+Connection:
+- Signal wire → Arduino PWM pin
+- Red wire → External 5V power supply (+)
+- Brown wire → Common ground (Arduino GND + Power supply -)
+
+
+PIN USAGE
+---------
+
+Compatible Pins:
+- On Arduino Uno/Nano: Any digital pin (0-13)
+- On Arduino Mega: Any digital pin (2-53)
+- Servo library disables PWM functionality on pins 9 and 10
+
+Note: While attach() works on any pin, using Timer1 pins 
+(9 and 10 on Uno) may interfere with PWM on those pins.
+
+
+TIMING AND REFRESH
+------------------
+
+Servo Signal:
+- 50Hz PWM signal (20ms period)
+- Pulse width determines position
+- Library automatically generates pulses
+
+Refresh Rate:
+- Servos updated every 20ms
+- Don't update faster than 15-20ms
+- Allow time for servo to reach position
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: Servo jitters or shakes
+Solutions:
+- Use external power supply
+- Add capacitor across power supply
+- Check for loose connections
+- Ensure adequate current supply
+- Use shielded cables for long runs
+
+Problem: Servo doesn't move to full range
+Solutions:
+- Calibrate using attach(pin, min, max)
+- Use writeMicroseconds() for fine control
+- Check servo specifications for pulse width range
+
+Problem: Servo moves in wrong direction
+Solutions:
+- Reverse the angle: write(180 - angle)
+- Or adjust min/max values in attach()
+
+Problem: Multiple servos don't work
+Solutions:
+- Use external power supply
+- Ensure adequate current (1A per servo)
+- Don't exceed maximum servo count for board
+
+Problem: Servo makes buzzing noise
+Solutions:
+- This is normal when holding position
+- Use detach() when not actively positioning
+- Reduce holding time if possible
+
+Problem: Code upload fails with servo attached
+Solutions:
+- Disconnect servo signal wire from pins 0 or 1
+- These are used for Serial communication
+- Reconnect after upload
+
+
+LIMITATIONS
+-----------
+
+Maximum Servos:
+- Arduino Uno/Nano: 12 servos
+- Arduino Mega: 48 servos
+- Limited by available timers
+
+PWM Pins Affected:
+- On Uno: Using Servo library disables analogWrite() on pins 9 and 10
+- On Mega: Using first 12 servos disables analogWrite() on pins 11 and 12
+
+Timing Conflicts:
+- Servo library uses hardware timers
+- May conflict with other timer-dependent libraries
+- Plan accordingly when using multiple libraries
+
+
+BEST PRACTICES
+--------------
+
+1. Always use external power for servos
+2. Connect all grounds together
+3. Add decoupling capacitors
+4. Allow 15-20ms between write() calls
+5. Use detach() when servo not in use (saves power)
+6. Test servo range before final implementation
+7. Calibrate min/max pulse widths if needed
+8. Consider using smooth movement functions
+9. Protect servos from mechanical binding
+10. Don't force servo past its limits
+
+
+ADVANCED: Creating Servo Sequences
+-----------------------------------
+
+#include <Servo.h>
+
+Servo myservo;
+
+struct ServoMove {
+  int angle;
+  int delayTime;
+};
+
+ServoMove sequence[] = {
+  {0, 1000},
+  {45, 500},
+  {90, 500},
+  {135, 500},
+  {180, 1000},
+  {90, 500}
+};
+
+void setup() {
+  myservo.attach(9);
+}
+
+void loop() {
+  for (int i = 0; i < 6; i++) {
+    myservo.write(sequence[i].angle);
+    delay(sequence[i].delayTime);
+  }
+}
+
+
+CONVERSION FORMULAS
+-------------------
+
+Angle to Microseconds:
+μs = map(angle, 0, 180, minPulse, maxPulse)
+
+Microseconds to Angle:
+angle = map(μs, minPulse, maxPulse, 0, 180)
+
+Degrees per Second (approximate):
+speed = angle_change / (delay_time / 1000.0)
