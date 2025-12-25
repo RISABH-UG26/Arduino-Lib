@@ -1,0 +1,461 @@
+WiFi Library Reference for Arduino
+====================================
+
+CLASSES
+-------
+WiFi - Main WiFi class for network connectivity
+WiFiClient - Client class for TCP connections
+WiFiServer - Server class for creating TCP servers
+WiFiUDP - UDP class for datagram communication
+
+
+FUNCTIONS & METHODS
+-------------------
+
+WiFi Class Methods:
+-------------------
+
+1. begin()
+   Syntax: WiFi.begin(ssid)
+           WiFi.begin(ssid, pass)
+           WiFi.begin()
+   Description: Initialize WiFi library and connect to network.
+   Parameters: ssid - network name (char*), pass - password (char*)
+   Returns: WL_CONNECTED on success
+   Example: WiFi.begin("MyNetwork", "password123");
+
+2. firmwareVersion()
+   Syntax: char* WiFi.firmwareVersion()
+   Description: Get the firmware version of the WiFi shield.
+   Returns: String containing firmware version
+   Example: Serial.println(WiFi.firmwareVersion());
+
+3. status()
+   Syntax: uint8_t WiFi.status()
+   Description: Get WiFi connection status.
+   Returns: WL_CONNECTED, WL_IDLE_STATUS, WL_NO_SHIELD, WL_CONNECT_FAILED, etc.
+   Example: if(WiFi.status() == WL_CONNECTED) { ... }
+
+4. connect()
+   Syntax: WiFi.connect(ssid)
+           WiFi.connect(ssid, pass)
+   Description: Connect to a wireless network.
+   Example: WiFi.connect("NetworkName", "password");
+
+5. disconnect()
+   Syntax: void WiFi.disconnect()
+   Description: Disconnect from the current network.
+   Example: WiFi.disconnect();
+
+6. config()
+   Syntax: WiFi.config(ip)
+           WiFi.config(ip, dns)
+           WiFi.config(ip, dns, gateway)
+           WiFi.config(ip, dns, gateway, subnet)
+   Description: Configure network settings manually (static IP).
+   Parameters: ip, dns, gateway, subnet - IPAddress objects
+   Example: WiFi.config(IPAddress(192,168,1,100));
+
+7. setDNS()
+   Syntax: void WiFi.setDNS(dns1)
+           void WiFi.setDNS(dns1, dns2)
+   Description: Set DNS server addresses.
+   Parameters: dns1, dns2 - IPAddress objects
+   Example: WiFi.setDNS(IPAddress(8,8,8,8));
+
+8. macAddress()
+   Syntax: uint8_t* WiFi.macAddress(mac)
+   Description: Get MAC address of WiFi shield.
+   Parameters: mac - 6-byte array to store MAC address
+   Returns: Pointer to MAC address array
+   Example: byte mac[6]; WiFi.macAddress(mac);
+
+9. localIP()
+   Syntax: IPAddress WiFi.localIP()
+   Description: Get the IP address assigned to the WiFi shield.
+   Returns: IPAddress object
+   Example: Serial.println(WiFi.localIP());
+
+10. subnetMask()
+    Syntax: IPAddress WiFi.subnetMask()
+    Description: Get the subnet mask of the WiFi shield.
+    Returns: IPAddress object
+    Example: Serial.println(WiFi.subnetMask());
+
+11. gatewayIP()
+    Syntax: IPAddress WiFi.gatewayIP()
+    Description: Get the gateway IP address.
+    Returns: IPAddress object
+    Example: Serial.println(WiFi.gatewayIP());
+
+12. SSID()
+    Syntax: char* WiFi.SSID()
+            char* WiFi.SSID(networkItem)
+    Description: Get SSID of current network or discovered network.
+    Parameters: networkItem - index of discovered network
+    Returns: SSID string
+    Example: Serial.println(WiFi.SSID());
+
+13. BSSID()
+    Syntax: uint8_t* WiFi.BSSID(bssid)
+    Description: Get BSSID (MAC address of access point).
+    Parameters: bssid - 6-byte array to store BSSID
+    Returns: Pointer to BSSID array
+    Example: byte bssid[6]; WiFi.BSSID(bssid);
+
+14. RSSI()
+    Syntax: int32_t WiFi.RSSI()
+            int32_t WiFi.RSSI(networkItem)
+    Description: Get signal strength (Received Signal Strength Indicator).
+    Parameters: networkItem - index of discovered network
+    Returns: Signal strength in dBm
+    Example: int rssi = WiFi.RSSI();
+
+15. encryptionType()
+    Syntax: uint8_t WiFi.encryptionType()
+            uint8_t WiFi.encryptionType(networkItem)
+    Description: Get encryption type of current or discovered network.
+    Parameters: networkItem - index of discovered network
+    Returns: Encryption type (TKIP, WEP, CCMP, NONE, AUTO)
+    Example: byte encryption = WiFi.encryptionType();
+
+16. getResult()
+    Syntax: WiFi.getResult()
+    Description: Get result of last command.
+    Example: WiFi.getResult();
+
+17. getSocket()
+    Syntax: WiFi.getSocket()
+    Description: Get socket number.
+    Example: WiFi.getSocket();
+
+
+WiFiClient Class Methods:
+--------------------------
+
+18. WiFiClient()
+    Syntax: WiFiClient client
+    Description: Create a WiFi client object for TCP connections.
+    Example: WiFiClient client;
+
+19. connect()
+    Syntax: client.connect(ip, port)
+            client.connect(host, port)
+    Description: Connect to specified IP or host on given port.
+    Parameters: ip - IPAddress, host - char*, port - uint16_t
+    Returns: true if successful
+    Example: client.connect("www.google.com", 80);
+
+20. connected()
+    Syntax: bool client.connected()
+    Description: Check if client is connected.
+    Returns: true if connected
+    Example: if(client.connected()) { ... }
+
+21. available()
+    Syntax: int client.available()
+    Description: Get number of bytes available for reading.
+    Returns: Number of bytes available
+    Example: while(client.available()) { ... }
+
+22. read()
+    Syntax: int client.read()
+            int client.read(buf, size)
+    Description: Read incoming byte or bytes from server.
+    Returns: Next byte or number of bytes read
+    Example: char c = client.read();
+
+23. write()
+    Syntax: size_t client.write(data)
+            size_t client.write(buf, size)
+    Description: Write data to server.
+    Parameters: data - byte, buf - buffer, size - length
+    Returns: Number of bytes written
+    Example: client.write("GET / HTTP/1.1\r\n");
+
+24. flush()
+    Syntax: void client.flush()
+    Description: Discard any bytes in incoming buffer.
+    Example: client.flush();
+
+25. stop()
+    Syntax: void client.stop()
+    Description: Disconnect from server.
+    Example: client.stop();
+
+
+WiFiServer Class Methods:
+--------------------------
+
+26. WiFiServer()
+    Syntax: WiFiServer server(port)
+    Description: Create a server that listens on specified port.
+    Parameters: port - uint16_t port number
+    Example: WiFiServer server(80);
+
+27. begin()
+    Syntax: void server.begin()
+    Description: Start listening for incoming connections.
+    Example: server.begin();
+
+28. available()
+    Syntax: WiFiClient server.available()
+    Description: Get a client that is connected and has data available.
+    Returns: WiFiClient object
+    Example: WiFiClient client = server.available();
+
+29. write()
+    Syntax: size_t server.write(data)
+            size_t server.write(buf, size)
+    Description: Write data to all connected clients.
+    Returns: Number of bytes written
+    Example: server.write("Hello clients!");
+
+
+WiFiUDP Class Methods:
+----------------------
+
+30. WiFiUDP()
+    Syntax: WiFiUDP udp
+    Description: Create UDP object for sending/receiving UDP packets.
+    Example: WiFiUDP udp;
+
+31. begin()
+    Syntax: uint8_t udp.begin(port)
+    Description: Initialize UDP socket and start listening on port.
+    Parameters: port - local port to listen on
+    Returns: 1 if successful
+    Example: udp.begin(8888);
+
+32. beginPacket()
+    Syntax: int udp.beginPacket(ip, port)
+            int udp.beginPacket(host, port)
+    Description: Start building a packet to send.
+    Parameters: ip - IPAddress, host - char*, port - uint16_t
+    Returns: 1 if successful
+    Example: udp.beginPacket("192.168.1.100", 8888);
+
+33. endPacket()
+    Syntax: int udp.endPacket()
+    Description: Finish packet and send it.
+    Returns: 1 if successful
+    Example: udp.endPacket();
+
+34. write()
+    Syntax: size_t udp.write(byte)
+            size_t udp.write(buffer, size)
+    Description: Write data to packet buffer.
+    Returns: Number of bytes written
+    Example: udp.write("Hello UDP");
+
+35. parsePacket()
+    Syntax: int udp.parsePacket()
+    Description: Check for incoming UDP packet.
+    Returns: Size of packet in bytes, or 0 if no packet
+    Example: int packetSize = udp.parsePacket();
+
+36. available()
+    Syntax: int udp.available()
+    Description: Get number of bytes in current packet.
+    Returns: Number of bytes available
+    Example: while(udp.available()) { ... }
+
+37. read()
+    Syntax: int udp.read()
+            int udp.read(buffer, len)
+    Description: Read from current packet.
+    Returns: Byte or number of bytes read
+    Example: char incomingByte = udp.read();
+
+38. flush()
+    Syntax: void udp.flush()
+    Description: Discard remaining bytes in current packet.
+    Example: udp.flush();
+
+39. stop()
+    Syntax: void udp.stop()
+    Description: Disconnect and release resources.
+    Example: udp.stop();
+
+40. remoteIP()
+    Syntax: IPAddress udp.remoteIP()
+    Description: Get IP address of sender of current packet.
+    Returns: IPAddress object
+    Example: Serial.println(udp.remoteIP());
+
+41. remotePort()
+    Syntax: uint16_t udp.remotePort()
+    Description: Get port of sender of current packet.
+    Returns: Port number
+    Example: int port = udp.remotePort();
+
+
+CONSTANTS
+---------
+
+WiFi Status Constants:
+- WL_IDLE_STATUS     - Temporary status during connection
+- WL_NO_SSID_AVAIL   - Configured SSID cannot be reached
+- WL_SCAN_COMPLETED  - Network scan completed
+- WL_CONNECTED       - Successfully connected
+- WL_CONNECT_FAILED  - Connection failed
+- WL_CONNECTION_LOST - Connection lost
+- WL_DISCONNECTED    - Disconnected from network
+
+Encryption Types:
+- TKIP       - WPA encryption
+- WEP        - WEP encryption
+- CCMP       - WPA2 encryption
+- NONE       - No encryption
+- AUTO       - Auto detect
+
+
+BASIC USAGE EXAMPLES
+--------------------
+
+Example 1: Connect to WiFi Network
+-----------------------------------
+#include <WiFi.h>
+
+char ssid[] = "YourNetworkName";
+char pass[] = "YourPassword";
+
+void setup() {
+  Serial.begin(9600);
+  
+  WiFi.begin(ssid, pass);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("\nConnected!");
+  Serial.print("IP address: ");
+  Serial.println(WiFi.localIP());
+}
+
+void loop() {
+  // Your code here
+}
+
+
+Example 2: WiFi Client - HTTP Request
+--------------------------------------
+#include <WiFi.h>
+
+char ssid[] = "YourNetwork";
+char pass[] = "YourPassword";
+
+WiFiClient client;
+
+void setup() {
+  Serial.begin(9600);
+  WiFi.begin(ssid, pass);
+  
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+  }
+  
+  if (client.connect("www.google.com", 80)) {
+    client.println("GET / HTTP/1.1");
+    client.println("Host: www.google.com");
+    client.println("Connection: close");
+    client.println();
+  }
+}
+
+void loop() {
+  while (client.available()) {
+    char c = client.read();
+    Serial.write(c);
+  }
+  
+  if (!client.connected()) {
+    client.stop();
+    while(true);
+  }
+}
+
+
+Example 3: WiFi Server
+----------------------
+#include <WiFi.h>
+
+WiFiServer server(80);
+
+void setup() {
+  WiFi.begin("SSID", "password");
+  server.begin();
+}
+
+void loop() {
+  WiFiClient client = server.available();
+  
+  if (client) {
+    if (client.available()) {
+      char c = client.read();
+      // Process request
+    }
+    client.stop();
+  }
+}
+
+
+Example 4: UDP Communication
+-----------------------------
+#include <WiFi.h>
+#include <WiFiUdp.h>
+
+WiFiUDP udp;
+unsigned int localPort = 8888;
+
+void setup() {
+  WiFi.begin("SSID", "password");
+  udp.begin(localPort);
+}
+
+void loop() {
+  // Send packet
+  udp.beginPacket("192.168.1.100", 8888);
+  udp.write("Hello from Arduino");
+  udp.endPacket();
+  
+  // Receive packet
+  int packetSize = udp.parsePacket();
+  if (packetSize) {
+    char packetBuffer[255];
+    udp.read(packetBuffer, packetSize);
+    Serial.println(packetBuffer);
+  }
+  
+  delay(1000);
+}
+
+
+Example 5: Static IP Configuration
+-----------------------------------
+#include <WiFi.h>
+
+IPAddress ip(192, 168, 1, 100);
+IPAddress gateway(192, 168, 1, 1);
+IPAddress subnet(255, 255, 255, 0);
+IPAddress dns(8, 8, 8, 8);
+
+void setup() {
+  WiFi.config(ip, dns, gateway, subnet);
+  WiFi.begin("SSID", "password");
+}
+
+
+NETWORK INFORMATION
+-------------------
+
+Getting Network Details:
+- Local IP:      WiFi.localIP()
+- Subnet Mask:   WiFi.subnetMask()
+- Gateway:       WiFi.gatewayIP()
+- MAC Address:   WiFi.macAddress(mac)
+- SSID:          WiFi.SSID()
+- RSSI:          WiFi.RSSI()
+- Encryption:    WiFi.encryptionType()
