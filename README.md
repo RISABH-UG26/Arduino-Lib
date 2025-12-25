@@ -27,6 +27,14 @@ Currently, this repository contains documentation for the following Arduino libr
    - File: `SPI_Reference.txt`
    - Functions: 19 methods covering SPI initialization, data transfer, configuration, and multi-device support
 
+4. **Adafruit GFX** - Core graphics library for displays
+   - File: `Adafruit_GFX_Reference.txt`
+   - Functions: 44 methods for drawing shapes, text, bitmaps, and display control
+
+5. **Adafruit SSD1306** - OLED display driver for SSD1306-based displays
+   - File: `Adafruit_SSD1306_Reference.txt`
+   - Functions: 41 methods for OLED display control, scrolling, and graphics (inherits from GFX)
+
 ## 🎯 Purpose
 
 The goal of this repository is to provide a centralized, easy-to-access reference for Arduino library functions without needing to search through source code or online documentation. Each library reference includes:

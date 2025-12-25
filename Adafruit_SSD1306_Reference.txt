@@ -1,0 +1,579 @@
+Adafruit SSD1306 Library Reference for Arduino
+===============================================
+
+CLASS
+-----
+Adafruit_SSD1306 - OLED display driver for SSD1306-based displays
+
+
+CONSTRUCTOR
+-----------
+
+Adafruit_SSD1306(uint8_t w, uint8_t h, TwoWire *twi, int8_t rst_pin, uint32_t clkDuring, uint32_t clkAfter)
+Adafruit_SSD1306(uint8_t w, uint8_t h, int8_t mosi_pin, int8_t sclk_pin, int8_t dc_pin, int8_t rst_pin, int8_t cs_pin)
+Adafruit_SSD1306(uint8_t w, uint8_t h, SPIClass *spi, int8_t dc_pin, int8_t rst_pin, int8_t cs_pin, uint32_t bitrate)
+Adafruit_SSD1306(int8_t rst_pin = -1)
+
+Description: Create SSD1306 display object for I2C or SPI communication.
+Parameters: 
+  - w, h: display width and height in pixels
+  - rst_pin: reset pin (-1 if not used)
+  - twi: I2C interface
+  - spi: SPI interface
+  - dc_pin: data/command pin (SPI)
+  - cs_pin: chip select pin (SPI)
+  - mosi_pin, sclk_pin: SPI pins for bit-bang
+
+Example (I2C):  Adafruit_SSD1306 display(128, 64, &Wire, -1);
+Example (SPI):  Adafruit_SSD1306 display(128, 64, &SPI, DC_PIN, RST_PIN, CS_PIN);
+
+
+INITIALIZATION FUNCTIONS
+------------------------
+
+1. begin()
+   Syntax: bool begin(uint8_t vcs, uint8_t addr, bool reset, bool periphBegin)
+           bool begin(uint8_t switchvcc = SSD1306_SWITCHCAPVCC, uint8_t i2caddr = 0x3C, bool reset = true, bool periphBegin = true)
+   Description: Initialize display hardware and allocate buffer.
+   Parameters:
+     - switchvcc: VCC selection (SSD1306_SWITCHCAPVCC or SSD1306_EXTERNALVCC)
+     - i2caddr: I2C address (usually 0x3C or 0x3D)
+     - reset: perform reset (true/false)
+     - periphBegin: initialize I2C/SPI peripheral
+   Returns: true if successful
+   Example: display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+
+
+DISPLAY UPDATE FUNCTIONS
+-------------------------
+
+2. display()
+   Syntax: void display()
+   Description: Update display with buffer contents. Call after drawing operations.
+   Example: display.display();
+
+3. clearDisplay()
+   Syntax: void clearDisplay()
+   Description: Clear the display buffer (set all pixels to off).
+   Note: Must call display() to update screen
+   Example: display.clearDisplay();
+
+
+DRAWING FUNCTIONS (Inherited from Adafruit_GFX)
+------------------------------------------------
+
+4. drawPixel()
+   Syntax: void drawPixel(int16_t x, int16_t y, uint16_t color)
+   Description: Draw a single pixel.
+   Parameters: color - SSD1306_WHITE, SSD1306_BLACK, or SSD1306_INVERSE
+   Example: display.drawPixel(64, 32, SSD1306_WHITE);
+
+5. drawLine()
+   Syntax: void drawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color)
+   Description: Draw a line between two points.
+   Example: display.drawLine(0, 0, 127, 63, SSD1306_WHITE);
+
+6. drawRect()
+   Syntax: void drawRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+   Description: Draw rectangle outline.
+   Example: display.drawRect(10, 10, 50, 30, SSD1306_WHITE);
+
+7. fillRect()
+   Syntax: void fillRect(int16_t x, int16_t y, int16_t w, int16_t h, uint16_t color)
+   Description: Draw filled rectangle.
+   Example: display.fillRect(10, 10, 50, 30, SSD1306_WHITE);
+
+8. drawCircle()
+   Syntax: void drawCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
+   Description: Draw circle outline.
+   Example: display.drawCircle(64, 32, 20, SSD1306_WHITE);
+
+9. fillCircle()
+   Syntax: void fillCircle(int16_t x0, int16_t y0, int16_t r, uint16_t color)
+   Description: Draw filled circle.
+   Example: display.fillCircle(64, 32, 20, SSD1306_WHITE);
+
+10. drawTriangle()
+    Syntax: void drawTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+    Description: Draw triangle outline.
+    Example: display.drawTriangle(64, 10, 20, 50, 108, 50, SSD1306_WHITE);
+
+11. fillTriangle()
+    Syntax: void fillTriangle(int16_t x0, int16_t y0, int16_t x1, int16_t y1, int16_t x2, int16_t y2, uint16_t color)
+    Description: Draw filled triangle.
+    Example: display.fillTriangle(64, 10, 20, 50, 108, 50, SSD1306_WHITE);
+
+12. drawRoundRect()
+    Syntax: void drawRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t radius, uint16_t color)
+    Description: Draw rounded rectangle outline.
+    Example: display.drawRoundRect(10, 10, 50, 30, 5, SSD1306_WHITE);
+
+13. fillRoundRect()
+    Syntax: void fillRoundRect(int16_t x, int16_t y, int16_t w, int16_t h, int16_t radius, uint16_t color)
+    Description: Draw filled rounded rectangle.
+    Example: display.fillRoundRect(10, 10, 50, 30, 5, SSD1306_WHITE);
+
+14. drawBitmap()
+    Syntax: void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color)
+            void drawBitmap(int16_t x, int16_t y, const uint8_t *bitmap, int16_t w, int16_t h, uint16_t color, uint16_t bg)
+    Description: Draw monochrome bitmap.
+    Example: display.drawBitmap(0, 0, logo, 128, 64, SSD1306_WHITE);
+
+15. drawChar()
+    Syntax: void drawChar(int16_t x, int16_t y, unsigned char c, uint16_t color, uint16_t bg, uint8_t size)
+    Description: Draw a single character.
+    Example: display.drawChar(10, 10, 'A', SSD1306_WHITE, SSD1306_BLACK, 2);
+
+
+TEXT FUNCTIONS (Inherited from Adafruit_GFX)
+---------------------------------------------
+
+16. setCursor()
+    Syntax: void setCursor(int16_t x, int16_t y)
+    Description: Set text cursor position.
+    Example: display.setCursor(0, 0);
+
+17. setTextColor()
+    Syntax: void setTextColor(uint16_t color)
+            void setTextColor(uint16_t color, uint16_t backgroundcolor)
+    Description: Set text color and optional background.
+    Example: display.setTextColor(SSD1306_WHITE);
+
+18. setTextSize()
+    Syntax: void setTextSize(uint8_t size)
+            void setTextSize(uint8_t size_x, uint8_t size_y)
+    Description: Set text size multiplier.
+    Example: display.setTextSize(2);
+
+19. setTextWrap()
+    Syntax: void setTextWrap(boolean w)
+    Description: Enable/disable text wrapping.
+    Example: display.setTextWrap(true);
+
+20. setFont()
+    Syntax: void setFont(const GFXfont *f)
+    Description: Set custom GFX font.
+    Example: display.setFont(&FreeSans9pt7b);
+
+21. getTextBounds()
+    Syntax: void getTextBounds(const char *string, int16_t x, int16_t y, int16_t *x1, int16_t *y1, uint16_t *w, uint16_t *h)
+    Description: Get bounding box for text.
+    Example: display.getTextBounds("Hello", 0, 0, &x1, &y1, &w, &h);
+
+22. print()
+    Syntax: size_t print(...)
+    Description: Print text to buffer.
+    Example: display.print("Temperature: ");
+
+23. println()
+    Syntax: size_t println(...)
+    Description: Print text with newline.
+    Example: display.println("Hello World");
+
+24. cp437()
+    Syntax: void cp437(boolean x)
+    Description: Enable CP437 character set.
+    Example: display.cp437(true);
+
+
+DISPLAY CONTROL FUNCTIONS
+--------------------------
+
+25. fillScreen()
+    Syntax: void fillScreen(uint16_t color)
+    Description: Fill entire display buffer with color.
+    Example: display.fillScreen(SSD1306_BLACK);
+
+26. invertDisplay()
+    Syntax: void invertDisplay(boolean i)
+    Description: Invert display (white<->black).
+    Example: display.invertDisplay(true);
+
+27. setRotation()
+    Syntax: void setRotation(uint8_t rotation)
+    Description: Set display rotation (0-3).
+    Example: display.setRotation(2);
+
+28. getRotation()
+    Syntax: uint8_t getRotation()
+    Description: Get current rotation.
+    Example: uint8_t rot = display.getRotation();
+
+29. dim()
+    Syntax: void dim(bool dim)
+    Description: Set display to dim mode.
+    Example: display.dim(true);
+
+
+SCROLLING FUNCTIONS
+-------------------
+
+30. startscrollright()
+    Syntax: void startscrollright(uint8_t start, uint8_t stop)
+    Description: Start right scrolling animation.
+    Parameters: start, stop - page addresses (0-7)
+    Example: display.startscrollright(0x00, 0x0F);
+
+31. startscrollleft()
+    Syntax: void startscrollleft(uint8_t start, uint8_t stop)
+    Description: Start left scrolling animation.
+    Example: display.startscrollleft(0x00, 0x0F);
+
+32. startscrolldiagright()
+    Syntax: void startscrolldiagright(uint8_t start, uint8_t stop)
+    Description: Start diagonal right scrolling.
+    Example: display.startscrolldiagright(0x00, 0x07);
+
+33. startscrolldiagleft()
+    Syntax: void startscrolldiagleft(uint8_t start, uint8_t stop)
+    Description: Start diagonal left scrolling.
+    Example: display.startscrolldiagleft(0x00, 0x07);
+
+34. stopscroll()
+    Syntax: void stopscroll()
+    Description: Stop scrolling animation.
+    Example: display.stopscroll();
+
+
+HARDWARE CONTROL FUNCTIONS
+---------------------------
+
+35. ssd1306_command()
+    Syntax: void ssd1306_command(uint8_t c)
+    Description: Send command byte to display.
+    Example: display.ssd1306_command(SSD1306_DISPLAYON);
+
+36. ssd1306_commandList()
+    Syntax: void ssd1306_commandList(const uint8_t *c, uint8_t n)
+    Description: Send list of commands to display.
+    Example: display.ssd1306_commandList(init_commands, sizeof(init_commands));
+
+
+DIMENSION FUNCTIONS (Inherited from Adafruit_GFX)
+--------------------------------------------------
+
+37. width()
+    Syntax: int16_t width()
+    Description: Get display width.
+    Example: int w = display.width();
+
+38. height()
+    Syntax: int16_t height()
+    Description: Get display height.
+    Example: int h = display.height();
+
+39. getCursorX()
+    Syntax: int16_t getCursorX()
+    Description: Get text cursor X position.
+    Example: int x = display.getCursorX();
+
+40. getCursorY()
+    Syntax: int16_t getCursorY()
+    Description: Get text cursor Y position.
+    Example: int y = display.getCursorY();
+
+
+BUFFER ACCESS
+-------------
+
+41. getBuffer()
+    Syntax: uint8_t *getBuffer()
+    Description: Get pointer to display buffer.
+    Returns: Pointer to buffer array
+    Example: uint8_t *buf = display.getBuffer();
+
+
+CONSTANTS
+---------
+
+Color Constants:
+- SSD1306_BLACK     - 0 (pixel off)
+- SSD1306_WHITE     - 1 (pixel on)
+- SSD1306_INVERSE   - 2 (invert pixel)
+
+VCC Selection:
+- SSD1306_SWITCHCAPVCC - Generate display voltage from 3.3V internally
+- SSD1306_EXTERNALVCC  - External VCC supply
+
+Common I2C Addresses:
+- 0x3C - Default address (most common)
+- 0x3D - Alternate address
+
+Display Commands:
+- SSD1306_DISPLAYOFF
+- SSD1306_DISPLAYON
+- SSD1306_SETCONTRAST
+- SSD1306_NORMALDISPLAY
+- SSD1306_INVERTDISPLAY
+
+Common Display Sizes:
+- 128x64 pixels (most common)
+- 128x32 pixels
+- 96x16 pixels
+
+
+BASIC USAGE EXAMPLE (I2C)
+-------------------------
+
+#include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+
+#define SCREEN_WIDTH 128
+#define SCREEN_HEIGHT 64
+#define OLED_RESET -1
+#define SCREEN_ADDRESS 0x3C
+
+Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
+
+void setup() {
+  Serial.begin(9600);
+  
+  if(!display.begin(SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS)) {
+    Serial.println(F("SSD1306 allocation failed"));
+    for(;;);
+  }
+  
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(SSD1306_WHITE);
+  display.setCursor(0, 0);
+  display.println(F("Hello, world!"));
+  display.display();
+}
+
+void loop() {
+}
+
+
+EXAMPLE: Displaying Text at Different Sizes
+--------------------------------------------
+
+#include <Adafruit_SSD1306.h>
+
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+
+void setup() {
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+  display.clearDisplay();
+  
+  // Size 1
+  display.setTextSize(1);
+  display.setCursor(0, 0);
+  display.print("Size 1");
+  
+  // Size 2
+  display.setTextSize(2);
+  display.setCursor(0, 10);
+  display.print("Size 2");
+  
+  // Size 3
+  display.setTextSize(3);
+  display.setCursor(0, 30);
+  display.print("Big!");
+  
+  display.display();
+}
+
+
+EXAMPLE: Drawing Shapes
+------------------------
+
+void drawShapes() {
+  display.clearDisplay();
+  
+  // Rectangle
+  display.drawRect(0, 0, 40, 30, SSD1306_WHITE);
+  
+  // Filled rectangle
+  display.fillRect(50, 0, 30, 20, SSD1306_WHITE);
+  
+  // Circle
+  display.drawCircle(100, 15, 10, SSD1306_WHITE);
+  
+  // Line
+  display.drawLine(0, 40, 127, 40, SSD1306_WHITE);
+  
+  // Triangle
+  display.drawTriangle(10, 50, 30, 63, 50, 50, SSD1306_WHITE);
+  
+  display.display();
+}
+
+
+EXAMPLE: Displaying Sensor Data
+--------------------------------
+
+#include <Adafruit_SSD1306.h>
+
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+
+void setup() {
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
+}
+
+void loop() {
+  float temperature = 23.5; // Get from sensor
+  int humidity = 65;        // Get from sensor
+  
+  display.clearDisplay();
+  
+  // Temperature
+  display.setTextSize(2);
+  display.setCursor(0, 0);
+  display.print("Temp:");
+  display.print(temperature);
+  display.println("C");
+  
+  // Humidity
+  display.setCursor(0, 20);
+  display.print("Hum:");
+  display.print(humidity);
+  display.println("%");
+  
+  display.display();
+  delay(2000);
+}
+
+
+EXAMPLE: Scrolling Text
+------------------------
+
+void scrollingDemo() {
+  display.clearDisplay();
+  display.setTextSize(2);
+  display.setCursor(0, 0);
+  display.println("Scrolling");
+  display.println("Example");
+  display.display();
+  
+  // Scroll right
+  display.startscrollright(0x00, 0x0F);
+  delay(2000);
+  display.stopscroll();
+  delay(1000);
+  
+  // Scroll left
+  display.startscrollleft(0x00, 0x0F);
+  delay(2000);
+  display.stopscroll();
+}
+
+
+EXAMPLE: Displaying Bitmap
+---------------------------
+
+// 16x16 pixel bitmap
+const unsigned char heart_bmp[] PROGMEM = {
+  0x00, 0x00, 0x18, 0x18, 0x3C, 0x3C, 0x7E, 0x7E,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xFE, 0x7F, 0x7C, 0x3E,
+  0x38, 0x1C, 0x10, 0x08, 0x00, 0x00, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+void drawBitmap() {
+  display.clearDisplay();
+  display.drawBitmap(56, 24, heart_bmp, 16, 16, SSD1306_WHITE);
+  display.display();
+}
+
+
+EXAMPLE: Animated Progress Bar
+-------------------------------
+
+void progressBar() {
+  for(int i = 0; i <= 100; i += 5) {
+    display.clearDisplay();
+    
+    // Draw outline
+    display.drawRect(10, 25, 108, 14, SSD1306_WHITE);
+    
+    // Fill progress
+    int fillWidth = map(i, 0, 100, 0, 104);
+    display.fillRect(12, 27, fillWidth, 10, SSD1306_WHITE);
+    
+    // Display percentage
+    display.setTextSize(1);
+    display.setCursor(52, 45);
+    display.print(i);
+    display.print("%");
+    
+    display.display();
+    delay(100);
+  }
+}
+
+
+EXAMPLE: Custom Font
+---------------------
+
+#include <Fonts/FreeSans9pt7b.h>
+
+void customFont() {
+  display.clearDisplay();
+  display.setFont(&FreeSans9pt7b);
+  display.setTextSize(1);
+  display.setCursor(0, 20);
+  display.print("Custom Font!");
+  display.display();
+  
+  // Reset to default font
+  display.setFont();
+}
+
+
+I2C vs SPI Comparison
+---------------------
+
+I2C Advantages:
+- Only 2 wires (SDA, SCL)
+- Multiple devices on same bus
+- Simpler wiring
+
+SPI Advantages:
+- Faster communication
+- Better for animations
+- More reliable at higher speeds
+
+I2C Setup:
+Adafruit_SSD1306 display(128, 64, &Wire, -1);
+
+SPI Setup:
+#define OLED_MOSI   9
+#define OLED_CLK   10
+#define OLED_DC    11
+#define OLED_CS    12
+#define OLED_RESET 13
+Adafruit_SSD1306 display(128, 64, OLED_MOSI, OLED_CLK, OLED_DC, OLED_RESET, OLED_CS);
+
+
+TROUBLESHOOTING
+---------------
+
+Problem: "SSD1306 allocation failed"
+Solution: 
+- Check I2C connections (SDA, SCL)
+- Verify I2C address (0x3C or 0x3D)
+- Check power supply (3.3V or 5V depending on module)
+
+Problem: Display shows garbage
+Solution:
+- Call clearDisplay() and display() after begin()
+- Verify buffer is large enough for display size
+
+Problem: Text appears cut off
+Solution:
+- Check text size and cursor position
+- Verify text stays within display dimensions
+- Use getTextBounds() to check text size
+
+Problem: Display very dim
+Solution:
+- Use display.dim(false) to disable dim mode
+- Check power supply voltage
+
+Problem: Slow updates
+Solution:
+- Minimize display() calls
+- Use SPI instead of I2C for faster updates
+- Clear only necessary portions, not entire screen
