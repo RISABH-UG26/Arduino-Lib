@@ -1,0 +1,366 @@
+nRF24L01+ Library Reference for Arduino
+=========================================
+
+CLASS
+-----
+RF24 - Main class for nRF24L01+ radio communication
+
+
+FUNCTIONS & METHODS
+-------------------
+
+1. begin()
+   Syntax: bool begin()
+   Description: Initializes the radio. Call this in setup(). Returns true if chip is found.
+   Example: radio.begin();
+
+2. isChipConnected()
+   Syntax: bool isChipConnected()
+   Description: Tests whether there is a chip connected and responding.
+   Example: if(radio.isChipConnected()) { ... }
+
+3. startListening()
+   Syntax: void startListening()
+   Description: Start listening on the pipes opened for reading.
+   Example: radio.startListening();
+
+4. stopListening()
+   Syntax: void stopListening()
+   Description: Stop listening for incoming messages.
+   Example: radio.stopListening();
+
+5. available()
+   Syntax: bool available()
+           bool available(uint8_t* pipe_num)
+   Description: Check if data is available to read. Optionally returns pipe number.
+   Example: if(radio.available()) { ... }
+
+6. read()
+   Syntax: void read(void* buf, uint8_t len)
+   Description: Read the payload available in the RX FIFO buffer.
+   Example: radio.read(&data, sizeof(data));
+
+7. write()
+   Syntax: bool write(const void* buf, uint8_t len)
+           bool write(const void* buf, uint8_t len, const bool multicast)
+   Description: Write data to the transmit payload buffer. Returns true if successful.
+   Example: radio.write(&data, sizeof(data));
+
+8. openWritingPipe()
+   Syntax: void openWritingPipe(const uint8_t* address)
+           void openWritingPipe(uint64_t address)
+   Description: Open a pipe for writing.
+   Example: radio.openWritingPipe(0xF0F0F0F0E1LL);
+
+9. openReadingPipe()
+   Syntax: void openReadingPipe(uint8_t number, const uint8_t* address)
+           void openReadingPipe(uint8_t number, uint64_t address)
+   Description: Open a pipe for reading. Number can be 0-5.
+   Example: radio.openReadingPipe(1, 0xF0F0F0F0E1LL);
+
+10. printDetails()
+    Syntax: void printDetails()
+    Description: Print a giant block of debugging information to Serial.
+    Example: radio.printDetails();
+
+11. printPrettyDetails()
+    Syntax: void printPrettyDetails()
+    Description: Print formatted debugging information to Serial.
+    Example: radio.printPrettyDetails();
+
+12. rxFifoFull()
+    Syntax: bool rxFifoFull()
+    Description: Test whether the RX FIFO is full.
+    Example: if(radio.rxFifoFull()) { ... }
+
+13. powerDown()
+    Syntax: void powerDown()
+    Description: Enter low-power mode. Reduces current consumption.
+    Example: radio.powerDown();
+
+14. powerUp()
+    Syntax: void powerUp()
+    Description: Wake up from low-power mode.
+    Example: radio.powerUp();
+
+15. writeFast()
+    Syntax: bool writeFast(const void* buf, uint8_t len)
+            bool writeFast(const void* buf, uint8_t len, const bool multicast)
+    Description: Non-blocking write to the open writing pipe.
+    Example: radio.writeFast(&data, sizeof(data));
+
+16. writeBlocking()
+    Syntax: bool writeBlocking(const void* buf, uint8_t len, uint32_t timeout)
+    Description: Blocking write with timeout. Returns true if successful.
+    Example: radio.writeBlocking(&data, sizeof(data), 1000);
+
+17. txStandBy()
+    Syntax: bool txStandBy()
+            bool txStandBy(uint32_t timeout, bool startTx)
+    Description: Wait until transmission is complete or timeout occurs.
+    Example: radio.txStandBy();
+
+18. writeAckPayload()
+    Syntax: void writeAckPayload(uint8_t pipe, const void* buf, uint8_t len)
+    Description: Write an ACK payload for the specified pipe.
+    Example: radio.writeAckPayload(1, &data, sizeof(data));
+
+19. whatHappened()
+    Syntax: void whatHappened(bool& tx_ok, bool& tx_fail, bool& rx_ready)
+    Description: Call this to find out what happened in the radio's status flags.
+    Example: radio.whatHappened(tx_ok, tx_fail, rx_ready);
+
+20. startFastWrite()
+    Syntax: void startFastWrite(const void* buf, uint8_t len, const bool multicast, bool startTx)
+    Description: Start a fast write operation.
+    Example: radio.startFastWrite(&data, sizeof(data), 0, 1);
+
+21. startWrite()
+    Syntax: void startWrite(const void* buf, uint8_t len, const bool multicast)
+    Description: Non-blocking write without auto-retry.
+    Example: radio.startWrite(&data, sizeof(data), 0);
+
+22. reUseTX()
+    Syntax: void reUseTX()
+    Description: Resend the last payload without rewriting to TX FIFO.
+    Example: radio.reUseTX();
+
+23. flush_tx()
+    Syntax: void flush_tx()
+    Description: Flush the transmit buffer.
+    Example: radio.flush_tx();
+
+24. flush_rx()
+    Syntax: void flush_rx()
+    Description: Flush the receive buffer.
+    Example: radio.flush_rx();
+
+25. testCarrier()
+    Syntax: bool testCarrier()
+    Description: Test if there is a carrier on the current channel.
+    Example: if(radio.testCarrier()) { ... }
+
+26. testRPD()
+    Syntax: bool testRPD()
+    Description: Test if signal is stronger than -64dBm (Received Power Detector).
+    Example: if(radio.testRPD()) { ... }
+
+27. isValid()
+    Syntax: bool isValid()
+    Description: Check if radio configuration is valid.
+    Example: if(radio.isValid()) { ... }
+
+28. closeReadingPipe()
+    Syntax: void closeReadingPipe(uint8_t pipe)
+    Description: Close a reading pipe.
+    Example: radio.closeReadingPipe(1);
+
+29. failureDetected()
+    Syntax: void failureDetected()
+    Description: Reset radio communication after failure.
+    Example: radio.failureDetected();
+
+30. setAddressWidth()
+    Syntax: void setAddressWidth(uint8_t a_width)
+    Description: Set the address width from 3 to 5 bytes (default is 5).
+    Example: radio.setAddressWidth(5);
+
+31. setRetries()
+    Syntax: void setRetries(uint8_t delay, uint8_t count)
+    Description: Set automatic retransmission delay and count.
+               delay: 0-15 (250-4000 µs), count: 0-15
+    Example: radio.setRetries(15, 15);
+
+32. setChannel()
+    Syntax: void setChannel(uint8_t channel)
+    Description: Set RF channel (0-125). Frequency = 2400 + channel MHz.
+    Example: radio.setChannel(76);
+
+33. getChannel()
+    Syntax: uint8_t getChannel()
+    Description: Get the current RF channel.
+    Example: uint8_t ch = radio.getChannel();
+
+34. setPayloadSize()
+    Syntax: void setPayloadSize(uint8_t size)
+    Description: Set static payload size (1-32 bytes).
+    Example: radio.setPayloadSize(32);
+
+35. getPayloadSize()
+    Syntax: uint8_t getPayloadSize()
+    Description: Get static payload size.
+    Example: uint8_t size = radio.getPayloadSize();
+
+36. getDynamicPayloadSize()
+    Syntax: uint8_t getDynamicPayloadSize()
+    Description: Get dynamic payload size of current packet.
+    Example: uint8_t size = radio.getDynamicPayloadSize();
+
+37. enableAckPayload()
+    Syntax: void enableAckPayload()
+    Description: Enable custom ACK payloads.
+    Example: radio.enableAckPayload();
+
+38. disableAckPayload()
+    Syntax: void disableAckPayload()
+    Description: Disable custom ACK payloads.
+    Example: radio.disableAckPayload();
+
+39. enableDynamicPayloads()
+    Syntax: void enableDynamicPayloads()
+    Description: Enable dynamically-sized payloads.
+    Example: radio.enableDynamicPayloads();
+
+40. disableDynamicPayloads()
+    Syntax: void disableDynamicPayloads()
+    Description: Disable dynamically-sized payloads.
+    Example: radio.disableDynamicPayloads();
+
+41. isPVariant()
+    Syntax: bool isPVariant()
+    Description: Determine if this is a nRF24L01+ or standard nRF24L01.
+    Example: if(radio.isPVariant()) { ... }
+
+42. setAutoAck()
+    Syntax: void setAutoAck(bool enable)
+            void setAutoAck(uint8_t pipe, bool enable)
+    Description: Enable/disable auto-acknowledgment for all pipes or specific pipe.
+    Example: radio.setAutoAck(true);
+
+43. setPALevel()
+    Syntax: void setPALevel(uint8_t level)
+            void setPALevel(uint8_t level, bool lnaEnable)
+    Description: Set Power Amplifier level (RF24_PA_MIN, RF24_PA_LOW, RF24_PA_HIGH, RF24_PA_MAX).
+    Example: radio.setPALevel(RF24_PA_HIGH);
+
+44. getPALevel()
+    Syntax: uint8_t getPALevel()
+    Description: Get current Power Amplifier level.
+    Example: uint8_t level = radio.getPALevel();
+
+45. getARC()
+    Syntax: uint8_t getARC()
+    Description: Get count of retransmissions for last write operation.
+    Example: uint8_t count = radio.getARC();
+
+46. setDataRate()
+    Syntax: bool setDataRate(rf24_datarate_e speed)
+    Description: Set data rate (RF24_250KBPS, RF24_1MBPS, RF24_2MBPS).
+    Example: radio.setDataRate(RF24_250KBPS);
+
+47. getDataRate()
+    Syntax: rf24_datarate_e getDataRate()
+    Description: Get current data rate.
+    Example: rf24_datarate_e rate = radio.getDataRate();
+
+48. setCRCLength()
+    Syntax: void setCRCLength(rf24_crclength_e length)
+    Description: Set CRC length (RF24_CRC_DISABLED, RF24_CRC_8, RF24_CRC_16).
+    Example: radio.setCRCLength(RF24_CRC_16);
+
+49. getCRCLength()
+    Syntax: rf24_crclength_e getCRCLength()
+    Description: Get CRC length.
+    Example: rf24_crclength_e len = radio.getCRCLength();
+
+50. disableCRC()
+    Syntax: void disableCRC()
+    Description: Disable CRC validation.
+    Example: radio.disableCRC();
+
+51. maskIRQ()
+    Syntax: void maskIRQ(bool tx_ok, bool tx_fail, bool rx_ready)
+    Description: Mask/unmask interrupt sources.
+    Example: radio.maskIRQ(1, 1, 0);
+
+52. txDelay
+    Syntax: uint32_t txDelay
+    Description: Variable to set transmit delay in microseconds.
+    Example: radio.txDelay = 250;
+
+53. csDelay
+    Syntax: uint32_t csDelay
+    Description: Variable to set chip select delay in microseconds.
+    Example: radio.csDelay = 5;
+
+54. startConstCarrier()
+    Syntax: void startConstCarrier(rf24_pa_dbm_e level, uint8_t channel)
+    Description: Start constant carrier wave for testing.
+    Example: radio.startConstCarrier(RF24_PA_LOW, 40);
+
+55. stopConstCarrier()
+    Syntax: void stopConstCarrier()
+    Description: Stop constant carrier wave.
+    Example: radio.stopConstCarrier();
+
+56. enableDynamicAck()
+    Syntax: void enableDynamicAck()
+    Description: Enable dynamic acknowledgements.
+    Example: radio.enableDynamicAck();
+
+57. isAckPayloadAvailable()
+    Syntax: bool isAckPayloadAvailable()
+    Description: Check if ACK payload is available.
+    Example: if(radio.isAckPayloadAvailable()) { ... }
+
+58. printf_begin()
+    Syntax: void printf_begin()
+    Description: Initialize printf functionality for printDetails().
+    Example: radio.printf_begin();
+
+59. sprintfPrettyDetails()
+    Syntax: char* sprintfPrettyDetails()
+    Description: Get pretty details as string instead of printing to Serial.
+    Example: char* details = radio.sprintfPrettyDetails();
+
+60. encodeRadioDetails()
+    Syntax: void encodeRadioDetails(uint8_t* encoded_status)
+    Description: Encode radio details into byte array.
+    Example: radio.encodeRadioDetails(buffer);
+
+
+CONSTRUCTOR
+-----------
+RF24(uint8_t ce_pin, uint8_t csn_pin)
+   Description: Create RF24 object with CE and CSN pins.
+   Example: RF24 radio(7, 8);
+
+
+COMMON CONSTANTS
+----------------
+Power Levels:
+- RF24_PA_MIN    (-18dBm)
+- RF24_PA_LOW    (-12dBm)
+- RF24_PA_HIGH   (-6dBm)
+- RF24_PA_MAX    (0dBm)
+
+Data Rates:
+- RF24_250KBPS   (250kbps)
+- RF24_1MBPS     (1Mbps)
+- RF24_2MBPS     (2Mbps)
+
+CRC Length:
+- RF24_CRC_DISABLED
+- RF24_CRC_8     (8-bit)
+- RF24_CRC_16    (16-bit)
+
+
+BASIC USAGE EXAMPLE
+-------------------
+#include <RF24.h>
+
+RF24 radio(7, 8); // CE, CSN pins
+const uint64_t pipe = 0xE8E8F0F0E1LL;
+
+void setup() {
+  radio.begin();
+  radio.openWritingPipe(pipe);
+  radio.setPALevel(RF24_PA_LOW);
+  radio.stopListening();
+}
+
+void loop() {
+  const char text[] = "Hello World";
+  radio.write(&text, sizeof(text));
+  delay(1000);
+}
